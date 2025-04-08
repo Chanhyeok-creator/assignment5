@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+import RPi.GPIO as GPIO
+import time
+
+# GPIO 핀 번호 정의 (실제 연결한 핀 번호로 변경)
+LED_A = 17  # 가장 낮은 비트 (2^0)
+LED_B = 27  # 중간 비트 (2^1)
+LED_C = 22  # 가장 높은 비트 (2^2)
+
+# GPIO 초기 설정
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED_A, GPIO.OUT)
+GPIO.setup(LED_B, GPIO.OUT)
+GPIO.setup(LED_C, GPIO.OUT)
+
+def display_binary(n):
+    """
+    n (0~7)를 2진수로 변환한 후, 각 LED를 ON/OFF 처리한다.
+    """
+    # n을 3자리의 2진 문자열로 변환 (예: '005' -> '101')
+    binary_str = format(n, '03b')
+    
+    # 각 자리수에 대해 LED 핀 설정: 오른쪽 자리수가 LED_A, 왼쪽이 LED_C
+    GPIO.output(LED_C, binary_str[0] == '1')
+    GPIO.output(LED_B, binary_str[1] == '1')
+    GPIO.output(LED_A, binary_str[2] == '1')
+
+try:
+    while True:
+        # 0부터 7까지 반복
+        for number in range(8):
+            display_binary(number)
+            time.sleep(0.5)
+            
+except KeyboardInterrupt:
+    # 사용자 Ctrl+C 로 중단시 모든 LED 끄고, GPIO 정리
+    pass
+finally:
+    GPIO.output(LED_A, False)
+    GPIO.output(LED_B, False)
+    GPIO.output(LED_C, False)
+    GPIO.cleanup()
+

@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import RPi.GPIO as GPIO
+import time
+
+# GPIO 핀 번호 설정 (BCM 모드 기준)
+led_pins = [17, 18, 27, 22]  # A, B, C, D
+
+# 설정 시작
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+# LED 핀 출력으로 설정
+for pin in led_pins:
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.LOW)
+
+print("LED를 순차적으로 자동으로 켜고 끕니다. Ctrl+C로 종료하세요.")
+
+try:
+    while True:
+        for pin in led_pins:
+            GPIO.output(pin, GPIO.HIGH)  # LED 켜기
+            time.sleep(1.0)              # 1초 대기
+            GPIO.output(pin, GPIO.LOW)   # LED 끄기
+
+except KeyboardInterrupt:
+    print("\n종료합니다.")
+finally:
+    GPIO.cleanup()
+
