@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+from gpiozero import LED
+from time import sleep
+
+# LED 객체 생성 (핀 번호는 BCM 기준)
+led_c = LED(22)  # 가장 높은 비트 (2^2)
+led_b = LED(27)  # 중간 비트 (2^1)
+led_a = LED(17)  # 가장 낮은 비트 (2^0)
+
+def display_binary(n):
+    """
+    n (0~7)를 2진수로 변환한 후, 각 LED를 켜거나 끕니다.
+    오른쪽 자리수가 가장 낮은 비트 (led_a), 왼쪽이 가장 높은 비트 (led_c)입니다.
+    """
+    # 3자리 2진수 문자열로 변환 (예: 5 -> '101')
+    binary_str = format(n, '03b')
+    
+    # 각 자리수에 따라 LED를 제어 (문자열의 각 문자는 '0' 또는 '1')
+    led_c.on() if binary_str[0] == '1' else led_c.off()
+    led_b.on() if binary_str[1] == '1' else led_b.off()
+    led_a.on() if binary_str[2] == '1' else led_a.off()
+
+try:
+    while True:
+        # 0부터 7까지 반복하며 LED에 2진수 표시
+        for number in range(8):
+            display_binary(number)
+            sleep(0.5)
+except KeyboardInterrupt:
+    pass
+finally:
+    # 스크립트 종료 시 모든 LED를 끔
+    led_a.off()
+    led_b.off()
+    led_c.off()
